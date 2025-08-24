@@ -1,0 +1,10 @@
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net6.0-windows7.0\TouchKeyBoard.csproj.AssemblyReference.cache
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net6.0-windows7.0\Interop.UIAutomationClient.dll
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net6.0-windows7.0\TouchKeyBoard.csproj.ResolveComReference.cache
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net6.0-windows7.0\TouchKeyBoard.Form1.resources
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net6.0-windows7.0\TouchKeyBoard.csproj.GenerateResource.cache
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net6.0-windows7.0\TouchKeyBoard.GeneratedMSBuildEditorConfig.editorconfig
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net6.0-windows7.0\TouchKeyBoard.AssemblyInfoInputs.cache
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net6.0-windows7.0\TouchKeyBoard.AssemblyInfo.cs
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net6.0-windows7.0\TouchKeyBoard.csproj.CoreCompileInputs.cache
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net6.0-windows7.0\TouchKeyBoard.sourcelink.json

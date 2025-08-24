@@ -9,4 +9,13 @@
     <Configurations>Debug;Release;debug1</Configurations>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="UIAutomationClient">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\UIAutomationClient.dll</HintPath>
+    </Reference>
+    <Reference Include="UIAutomationTypes">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\UIAutomationTypes.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

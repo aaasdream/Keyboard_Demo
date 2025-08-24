@@ -1,38 +1,70 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Windows.Automation; // 需要參考 UIAutomationClient 和 UIAutomationTypes
 
 namespace TouchKeyBoard
 {
     public partial class Form1 : Form
     {
         #region Win32 API 導入與常數
+
+        // --- 視窗定位與樣式設定 ---
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-
         private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
         private const uint SWP_NOSIZE = 0x0001;
         private const uint SWP_NOMOVE = 0x0002;
         private const uint SWP_NOACTIVATE = 0x0010;
-
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
-
-        [DllImport("user32.dll")]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-
         private const int GWL_EXSTYLE = -20;
         private const int WS_EX_NOACTIVATE = 0x08000000;
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT { public int Left, Top, Right, Bottom; }
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+        [DllImport("user32.dll")]
+        private static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+
+        // --- 用於發送關閉訊息的 API ---
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        private const uint WM_CLOSE = 0x0010;
+
+
+        private delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+        private const uint EVENT_OBJECT_SHOW = 0x8002;
+        private const uint EVENT_OBJECT_HIDE = 0x8003;
+        private const uint WINEVENT_OUTOFCONTEXT = 0;
+        private const string TEAMS_CALL_WINDOW_CLASS = "TeamsWebView";
 
         #endregion
 
-        #region 變數與屬性
+        #region 狀態管理與變數
+
+        private enum AppState
+        {
+            Normal,
+            IncomingCall,
+            InCall
+        }
+        private AppState currentState = AppState.Normal;
 
         private bool debug = true;
         private Form debugWindow;
@@ -40,12 +72,12 @@ namespace TouchKeyBoard
         private Button[] buttons = new Button[10];
         private string currentFocusedAppName = "";
         private IntPtr lastActiveWindow = IntPtr.Zero;
-        private readonly string configFilePath = Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory,
-            "config.json"
-        );
+        private readonly string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
         private Dictionary<string, List<ShortcutKey>> appShortcuts = new();
         private System.Windows.Forms.Timer focusCheckTimer = new();
+        private WinEventDelegate teamsCallDelegate;
+        private IntPtr teamsEventHook = IntPtr.Zero;
+        private IntPtr teamsCallWindowHandle = IntPtr.Zero;
 
         #endregion
 
@@ -54,32 +86,43 @@ namespace TouchKeyBoard
         public Form1()
         {
             InitializeComponent();
-            
+
             this.Text = "TouchKeyBoard";
             this.TopMost = true;
             this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             this.ShowInTaskbar = false;
-            
+
             Directory.CreateDirectory(Path.GetDirectoryName(configFilePath));
-            
+
             LoadConfig();
             CreateButtons();
-            
+            InitializeTeamsHook();
+
             if (debug)
             {
                 CreateDebugWindow();
             }
-            
+
             focusCheckTimer.Interval = 500;
             focusCheckTimer.Tick += CheckFocusedWindow;
             focusCheckTimer.Start();
-            
+
             if (debug)
             {
                 LogDebugMessage($"調試模式已啟動 - {DateTime.Now:HH:mm:ss}");
                 LogDebugMessage($"設定檔路徑: {configFilePath}");
                 LogDebugMessage("正在監控視窗變化...");
+                LogDebugMessage("Teams 來電監聽已啟動。");
             }
+
+            this.FormClosed += (s, e) => {
+                if (teamsEventHook != IntPtr.Zero)
+                {
+                    UnhookWinEvent(teamsEventHook);
+                    if (debug) LogDebugMessage("Teams 來電監聽掛鉤已卸載。");
+                }
+                debugWindow?.Close();
+            };
         }
 
         protected override CreateParams CreateParams
@@ -91,7 +134,7 @@ namespace TouchKeyBoard
                 return cp;
             }
         }
-        
+
         #endregion
 
         #region 調試功能
@@ -122,17 +165,15 @@ namespace TouchKeyBoard
 
             debugWindow.Controls.Add(debugTextBox);
             debugWindow.Show();
-            
-            this.FormClosed += (s, e) => debugWindow?.Close();
         }
 
         private void LogDebugMessage(string message)
         {
             if (!debug || debugTextBox == null) return;
-            
+
             string timestamp = DateTime.Now.ToString("HH:mm:ss");
             string logMessage = $"[{timestamp}] {message}";
-            
+
             if (debugTextBox.InvokeRequired)
             {
                 debugTextBox.Invoke(new Action(() =>
@@ -149,26 +190,20 @@ namespace TouchKeyBoard
                 debugTextBox.ScrollToCaret();
             }
         }
-
         #endregion
 
         #region 設定檔處理 (JSON)
 
-        /// <summary>
-        /// 載入設定檔。如果檔案不存在，則創建一個預設的設定檔，然後再載入。
-        /// </summary>
         private void LoadConfig()
         {
             try
             {
-                // --- 步驟 1: 檢查設定檔是否存在 ---
                 if (File.Exists(configFilePath))
                 {
-                    // 檔案存在，直接讀取
                     if (debug) LogDebugMessage("找到設定檔，正在讀取...");
                     string json = File.ReadAllText(configFilePath);
                     var loadedSettings = JsonSerializer.Deserialize<Dictionary<string, List<ShortcutKey>>>(json);
-                    
+
                     if (loadedSettings != null)
                     {
                         appShortcuts = loadedSettings;
@@ -182,14 +217,9 @@ namespace TouchKeyBoard
                 }
                 else
                 {
-                    // --- 步驟 2: 檔案不存在，進入創建流程 ---
                     if (debug) LogDebugMessage("設定檔不存在，將創建並載入預設設定檔。");
-                    
-                    // 2a. 呼叫方法，將預設的 JSON 字串寫入新檔案
                     CreateDefaultConfigFile();
-                    
-                    // 2b. 重新呼叫自己，這次就會讀取到剛剛創建的檔案
-                    LoadConfig(); 
+                    LoadConfig();
                 }
             }
             catch (Exception ex)
@@ -199,10 +229,6 @@ namespace TouchKeyBoard
                 appShortcuts = new Dictionary<string, List<ShortcutKey>>();
             }
         }
-
-        /// <summary>
-        /// 當 config.json 不存在時，創建一個包含預設內容的檔案。
-        /// </summary>
         private void CreateDefaultConfigFile()
         {
             try
@@ -217,10 +243,6 @@ namespace TouchKeyBoard
                 if (debug) LogDebugMessage($"✗ 創建預設設定檔失敗: {ex.Message}");
             }
         }
-
-        /// <summary>
-        /// 返回包含預設快捷鍵的 JSON 格式字串。
-        /// </summary>
         private string GetDefaultConfigJsonString()
         {
             return """
@@ -276,16 +298,96 @@ namespace TouchKeyBoard
             }
             """;
         }
+        #endregion
+
+        #region Teams 來電監聽
+
+        private void InitializeTeamsHook()
+        {
+            teamsCallDelegate = new WinEventDelegate(WinEventProc);
+            teamsEventHook = SetWinEventHook(EVENT_OBJECT_SHOW, EVENT_OBJECT_HIDE, IntPtr.Zero, teamsCallDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
+        }
+
+        private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        {
+            if (idObject != 0 || hwnd == IntPtr.Zero) return;
+            if (currentState == AppState.InCall && eventType == EVENT_OBJECT_SHOW) return;
+
+            StringBuilder className = new StringBuilder(256);
+            GetClassName(hwnd, className, className.Capacity);
+
+            if (className.ToString() == TEAMS_CALL_WINDOW_CLASS)
+            {
+                if (eventType == EVENT_OBJECT_SHOW)
+                {
+                    var availableActions = DetectTeamsCallActions(hwnd);
+                    if (availableActions.Count > 0)
+                    {
+                        ChangeState(AppState.IncomingCall, hwnd, availableActions);
+                    }
+                }
+                else if (eventType == EVENT_OBJECT_HIDE)
+                {
+                    if (hwnd == teamsCallWindowHandle)
+                    {
+                        ChangeState(AppState.Normal, IntPtr.Zero, null);
+                    }
+                }
+            }
+        }
+
+        private List<string> DetectTeamsCallActions(IntPtr hwnd)
+        {
+            var availableActions = new List<string>();
+            if (!GetWindowRect(hwnd, out RECT rect) || (rect.Right - rect.Left) <= 300) return availableActions;
+
+            if (debug) LogDebugMessage($" -> 尺寸符合. 開始 UIA 掃描...");
+            try
+            {
+                AutomationElement rootElement = AutomationElement.FromHandle(hwnd);
+                if (rootElement == null) return availableActions;
+
+                var buttonCondition = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button);
+                var allButtons = rootElement.FindAll(TreeScope.Descendants, buttonCondition);
+
+                string[] videoAcceptNames = { "Accept with video", "接聽視訊" };
+                string[] audioAcceptNames = { "Accept with audio", "接聽語音", "Accept", "接聽" };
+                string[] declineNames = { "Decline", "拒絕" };
+
+                if (debug) LogDebugMessage($"   - 掃描到 {allButtons.Count} 個按鈕元件。");
+                foreach (AutomationElement button in allButtons)
+                {
+                    try
+                    {
+                        string name = button.Current.Name;
+                        if (string.IsNullOrWhiteSpace(name)) continue;
+                        if (debug) LogDebugMessage($"   - 找到按鈕: '{name}'");
+
+                        if (videoAcceptNames.Any(x => name.Contains(x, StringComparison.OrdinalIgnoreCase)) && !availableActions.Contains("Video"))
+                            availableActions.Add("Video");
+                        if (audioAcceptNames.Any(x => name.Contains(x, StringComparison.OrdinalIgnoreCase)) && !availableActions.Contains("Audio"))
+                            availableActions.Add("Audio");
+                        if (declineNames.Any(x => name.Contains(x, StringComparison.OrdinalIgnoreCase)) && !availableActions.Contains("Decline"))
+                            availableActions.Add("Decline");
+                    }
+                    catch (ElementNotAvailableException) { }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (debug) LogDebugMessage($"   - UIA 掃描出錯: {ex.Message}");
+            }
+            if (debug) LogDebugMessage($" -> 掃描完成. 偵測到的操作: [{string.Join(", ", availableActions)}]");
+            return availableActions;
+        }
 
         #endregion
 
-        #region 焦點監控與邏輯
+        #region 焦點監控與狀態切換
 
         private void CheckFocusedWindow(object sender, EventArgs e)
         {
-            //
             SetWindowPos(this.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-
 
             IntPtr currentWindow = GetForegroundWindow();
             if (currentWindow == this.Handle || (debugWindow != null && currentWindow == debugWindow.Handle))
@@ -294,36 +396,49 @@ namespace TouchKeyBoard
             }
 
             string appName = GetProcessNameFromHwnd(currentWindow);
-            
-            if (!string.IsNullOrEmpty(appName))
+
+            if (currentState == AppState.InCall)
             {
-                if (appName != "TouchKeyBoard")
+                if (appName.ToLower().Contains("msteams"))
                 {
+                    teamsCallWindowHandle = currentWindow;
                     lastActiveWindow = currentWindow;
                 }
-                
-                if (appName != currentFocusedAppName)
+                else
                 {
-                    currentFocusedAppName = appName;
-                    
-                    this.Text = $"TouchKeyBoard - {appName}";
-                    
-                    if (debug)
-                    {
-                        LogDebugMessage($"--- 視窗焦點變更: {appName} ---");
-                        if (appShortcuts.ContainsKey(appName))
-                        {
-                            LogDebugMessage($"★★★ 找到匹配設定: {appName}，共 {appShortcuts[appName].Count} 個快捷鍵 ★★★");
-                        }
-                        else
-                        {
-                            LogDebugMessage($"   (無匹配設定)");
-                        }
-                    }
-                    
-                    UpdateButtonsForApp(appName);
+                    LogDebugMessage(" -> 焦點已離開 Teams，假設通話結束。");
+                    ChangeState(AppState.Normal, IntPtr.Zero, null);
                 }
             }
+            else if (currentState == AppState.Normal)
+            {
+                if (!string.IsNullOrEmpty(appName))
+                {
+                    if (appName != "TouchKeyBoard")
+                    {
+                        lastActiveWindow = currentWindow;
+                    }
+
+                    if (appName != currentFocusedAppName)
+                    {
+                        currentFocusedAppName = appName;
+                        UpdateButtonsForApp(null);
+                    }
+                }
+            }
+        }
+
+        private void ChangeState(AppState newState, IntPtr windowHandle, List<string> teamsActions)
+        {
+            if (currentState == newState) return;
+
+            LogDebugMessage($"--- 狀態變更: {currentState} -> {newState} ---");
+            currentState = newState;
+            teamsCallWindowHandle = windowHandle;
+
+            this.Invoke(new Action(() => {
+                UpdateButtonsForApp(teamsActions);
+            }));
         }
 
         private string GetProcessNameFromHwnd(IntPtr hwnd)
@@ -331,48 +446,183 @@ namespace TouchKeyBoard
             try
             {
                 GetWindowThreadProcessId(hwnd, out uint pid);
-                Process process = Process.GetProcessById((int)pid);
-                return process.ProcessName;
+                return Process.GetProcessById((int)pid).ProcessName;
             }
-            catch
-            {
-                return "";
-            }
+            catch { return ""; }
         }
-        
+
         #endregion
 
         #region UI 創建與事件處理
 
-        private void UpdateButtonsForApp(string appName)
+        private void UpdateButtonsForApp(List<string> teamsActions)
         {
+            this.Text = $"TouchKeyBoard - {currentState}";
+            switch (currentState)
+            {
+                case AppState.IncomingCall:
+                    SetupIncomingCallButtons(teamsActions);
+                    break;
+                case AppState.InCall:
+                    SetupInCallButtons();
+                    break;
+                case AppState.Normal:
+                default:
+                    SetupNormalButtons();
+                    break;
+            }
+        }
+
+        private void SetupNormalButtons()
+        {
+            this.Text = $"TouchKeyBoard - {currentFocusedAppName}";
             foreach (Button btn in buttons)
             {
-                if (btn != null)
-                {
-                    btn.Text = "";
-                    btn.Tag = null;
-                    btn.Enabled = false;
-                }
+                btn.Text = ""; btn.Tag = null; btn.Enabled = false;
+                btn.BackColor = SystemColors.Control; btn.ForeColor = SystemColors.ControlText;
             }
-            
-            if (!appShortcuts.ContainsKey(appName))
+            if (!appShortcuts.ContainsKey(currentFocusedAppName))
             {
                 if (debug) LogDebugMessage("按鈕已清空（無對應設定）");
                 return;
             }
-                
-            var shortcuts = appShortcuts[appName];
-            int enabledButtons = 0;
+            var shortcuts = appShortcuts[currentFocusedAppName];
             for (int i = 0; i < shortcuts.Count && i < buttons.Length; i++)
             {
                 buttons[i].Text = $"{shortcuts[i].DisplayName}\n{shortcuts[i].KeyCombination}";
                 buttons[i].Tag = shortcuts[i];
                 buttons[i].Enabled = true;
-                enabledButtons++;
             }
-            
-            if (debug) LogDebugMessage($"✓ 按鈕更新完成，啟用 {enabledButtons} 個按鈕");
+        }
+
+        private void SetupIncomingCallButtons(List<string> actions)
+        {
+            foreach (Button btn in buttons)
+            {
+                btn.Text = ""; btn.Tag = null; btn.Enabled = false;
+                btn.BackColor = SystemColors.Control; btn.ForeColor = SystemColors.ControlText;
+            }
+            int buttonIndex = 0;
+            if (actions.Contains("Video"))
+            {
+                buttons[buttonIndex].Text = "接聽視訊";
+                buttons[buttonIndex].Tag = new ShortcutKey { DisplayName = "接聽視訊", KeyCombination = "Ctrl+Shift+A", SendKeysFormat = "^+a" };
+                buttons[buttonIndex].Enabled = true;
+                buttons[buttonIndex].BackColor = Color.FromArgb(0, 120, 212);
+                buttons[buttonIndex].ForeColor = Color.White;
+                buttonIndex++;
+            }
+            if (actions.Contains("Audio"))
+            {
+                buttons[buttonIndex].Text = "接聽語音";
+                buttons[buttonIndex].Tag = new ShortcutKey { DisplayName = "接聽語音", KeyCombination = "Ctrl+Shift+S", SendKeysFormat = "^+s" };
+                buttons[buttonIndex].Enabled = true;
+                buttons[buttonIndex].BackColor = Color.FromArgb(4, 153, 114);
+                buttons[buttonIndex].ForeColor = Color.White;
+                buttonIndex++;
+            }
+            if (actions.Contains("Decline"))
+            {
+                buttons[buttonIndex].Text = "拒絕";
+                buttons[buttonIndex].Tag = new ShortcutKey { DisplayName = "拒絕", KeyCombination = "Ctrl+Shift+D", SendKeysFormat = "^+d" };
+                buttons[buttonIndex].Enabled = true;
+                buttons[buttonIndex].BackColor = Color.FromArgb(217, 48, 48);
+                buttons[buttonIndex].ForeColor = Color.White;
+                buttonIndex++;
+            }
+        }
+
+        private void SetupInCallButtons()
+        {
+            foreach (Button btn in buttons)
+            {
+                btn.Text = ""; btn.Tag = null; btn.Enabled = false;
+                btn.BackColor = SystemColors.Control; btn.ForeColor = SystemColors.ControlText;
+            }
+            buttons[0].Text = "靜音切換";
+            buttons[0].Tag = new ShortcutKey { DisplayName = "靜音切換", KeyCombination = "Ctrl+Shift+M", SendKeysFormat = "^+m" };
+            buttons[0].Enabled = true;
+            buttons[0].BackColor = Color.DarkGray;
+            buttons[0].ForeColor = Color.White;
+            buttons[1].Text = "視訊切換";
+            buttons[1].Tag = new ShortcutKey { DisplayName = "視訊切換", KeyCombination = "Ctrl+Shift+O", SendKeysFormat = "^+o" };
+            buttons[1].Enabled = true;
+            buttons[1].BackColor = Color.DarkSlateBlue;
+            buttons[1].ForeColor = Color.White;
+            buttons[2].Text = "掛斷";
+            buttons[2].Tag = new ShortcutKey { DisplayName = "掛斷", KeyCombination = "Ctrl+Shift+H", SendKeysFormat = "^+h" };
+            buttons[2].Enabled = true;
+            buttons[2].BackColor = Color.FromArgb(217, 48, 48);
+            buttons[2].ForeColor = Color.White;
+        }
+
+        private void Button_Click(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            if (button.Tag is not ShortcutKey shortcut) return;
+
+            LogDebugMessage($">>> 執行快捷鍵: {shortcut.DisplayName} ({shortcut.SendKeysFormat})");
+
+            IntPtr targetWindow = (currentState == AppState.IncomingCall || currentState == AppState.InCall)
+                                  ? teamsCallWindowHandle
+                                  : lastActiveWindow;
+
+            if (targetWindow == IntPtr.Zero)
+            {
+                LogDebugMessage("✗ 目標窗口句柄為空，無法發送按鍵。");
+                return;
+            }
+
+            try
+            {
+                bool switchResult = SetForegroundWindow(targetWindow);
+                if (debug) LogDebugMessage($"切換窗口結果: {(switchResult ? "成功" : "失敗")}");
+
+                if (switchResult)
+                {
+                    System.Threading.Thread.Sleep(100);
+                    SendKeys.SendWait(shortcut.SendKeysFormat);
+                    LogDebugMessage($"✓ 快捷鍵已發送");
+
+                    // ▼▼▼ 核心修正 ▼▼▼
+                    if (currentState == AppState.IncomingCall)
+                    {
+                        if (shortcut.DisplayName.Contains("接聽"))
+                        {
+                            // 儲存當前的來電視窗句柄，以便稍後關閉
+                            IntPtr windowToClose = teamsCallWindowHandle;
+
+                            // 立即切換到通話中狀態
+                            ChangeState(AppState.InCall, IntPtr.Zero, null);
+                            LogDebugMessage("-> 偵測到接聽操作，已切換到 InCall 狀態。");
+
+                            // 創建一個一次性的計時器來延遲發送關閉訊息
+                            System.Windows.Forms.Timer closeTimer = new System.Windows.Forms.Timer();
+                            closeTimer.Interval = 1500; // 延遲 1.5 秒
+                            closeTimer.Tick += (timerSender, timerArgs) =>
+                            {
+                                // 計時器觸發時執行
+                                SendMessage(windowToClose, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                                LogDebugMessage($"✓ [延遲任務] 已發送 WM_CLOSE 訊息到來電視窗 {windowToClose}。");
+                                closeTimer.Stop(); // 停止計時器
+                                closeTimer.Dispose(); // 釋放資源
+                            };
+                            closeTimer.Start(); // 啟動計時器
+                            LogDebugMessage($"-> 已啟動 1.5 秒延遲關閉計時器。");
+                        }
+                        else if (shortcut.DisplayName.Contains("拒絕"))
+                        {
+                            // 拒絕操作通常會直接關閉視窗，所以我們可以立即切換回正常狀態
+                            ChangeState(AppState.Normal, IntPtr.Zero, null);
+                        }
+                    }
+                    // ▲▲▲ 核心修正 ▲▲▲
+                }
+            }
+            catch (Exception ex)
+            {
+                if (debug) LogDebugMessage($"✗ 發送快捷鍵失敗: {ex.Message}");
+            }
         }
 
         private void CreateButtons()
@@ -390,7 +640,8 @@ namespace TouchKeyBoard
                     Enabled = false,
                     Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
                     TabStop = false,
-                    FlatStyle = FlatStyle.Flat
+                    FlatStyle = FlatStyle.Flat,
+                    Font = new Font("Segoe UI", 9F, FontStyle.Bold)
                 };
                 buttons[i].FlatAppearance.BorderSize = 1;
                 buttons[i].Click += Button_Click;
@@ -411,42 +662,6 @@ namespace TouchKeyBoard
             Resize += Form1_Resize;
         }
 
-        private void Button_Click(object sender, EventArgs e)
-        {
-            Button button = (Button)sender;
-            if (button.Tag is not ShortcutKey shortcut) return;
-            
-            if (debug)
-            {
-                LogDebugMessage($">>> 執行快捷鍵: {shortcut.DisplayName} ({shortcut.KeyCombination})");
-                LogDebugMessage($"目標窗口句柄: {lastActiveWindow}");
-            }
-            
-            if (lastActiveWindow != IntPtr.Zero)
-            {
-                try
-                {
-                    bool switchResult = SetForegroundWindow(lastActiveWindow);
-                    if (debug) LogDebugMessage($"切換窗口結果: {(switchResult ? "成功" : "失敗")}");
-                    
-                    if (switchResult)
-                    {
-                        System.Threading.Thread.Sleep(100); 
-                        SendKeys.SendWait(shortcut.SendKeysFormat);
-                        if (debug) LogDebugMessage($"✓ 快捷鍵已發送到目標窗口: {shortcut.SendKeysFormat}");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (debug) LogDebugMessage($"✗ 發送快捷鍵失敗: {ex.Message}");
-                }
-            }
-            else
-            {
-                if (debug) LogDebugMessage("✗ 沒有記住的目標窗口");
-            }
-        }
-
         private void ConfigButton_Click(object sender, EventArgs e)
         {
             if (debug) LogDebugMessage("設定按鈕被點擊");
@@ -457,7 +672,7 @@ namespace TouchKeyBoard
             }
             catch (Exception ex)
             {
-                 MessageBox.Show($"無法打開檔案總管：{ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"無法打開檔案總管：{ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
