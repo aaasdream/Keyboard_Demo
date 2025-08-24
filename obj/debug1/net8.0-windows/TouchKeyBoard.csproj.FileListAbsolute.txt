@@ -16,3 +16,21 @@ Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-wind
 Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\ref\TouchKeyBoard.dll
 Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.sourcelink.json
 Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.csproj.AssemblyReference.cache
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\bin\debug1\net8.0-windows\TouchKeyBoard.exe
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\bin\debug1\net8.0-windows\TouchKeyBoard.deps.json
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\bin\debug1\net8.0-windows\TouchKeyBoard.runtimeconfig.json
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\bin\debug1\net8.0-windows\TouchKeyBoard.dll
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\bin\debug1\net8.0-windows\TouchKeyBoard.pdb
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.csproj.AssemblyReference.cache
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.Form1.resources
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.csproj.GenerateResource.cache
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.GeneratedMSBuildEditorConfig.editorconfig
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.AssemblyInfoInputs.cache
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.AssemblyInfo.cs
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.csproj.CoreCompileInputs.cache
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.sourcelink.json
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.dll
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\refint\TouchKeyBoard.dll
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.pdb
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.genruntimeconfig.cache
+\\vmware-host\Shared Folders\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\ref\TouchKeyBoard.dll

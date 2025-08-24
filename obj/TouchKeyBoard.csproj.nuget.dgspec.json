@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "Z:\\文件\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\TouchKeyBoard.csproj": {}
+    "\\\\vmware-host\\Shared Folders\\文件\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\TouchKeyBoard.csproj": {}
   },
   "projects": {
-    "Z:\\文件\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\TouchKeyBoard.csproj": {
+    "\\\\vmware-host\\Shared Folders\\文件\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\TouchKeyBoard.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "Z:\\文件\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\TouchKeyBoard.csproj",
+        "projectUniqueName": "\\\\vmware-host\\Shared Folders\\文件\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\TouchKeyBoard.csproj",
         "projectName": "TouchKeyBoard",
-        "projectPath": "Z:\\文件\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\TouchKeyBoard.csproj",
+        "projectPath": "\\\\vmware-host\\Shared Folders\\文件\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\TouchKeyBoard.csproj",
         "packagesPath": "C:\\Users\\aking\\.nuget\\packages\\",
-        "outputPath": "Z:\\文件\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\obj\\",
+        "outputPath": "\\\\vmware-host\\Shared Folders\\文件\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\aking\\AppData\\Roaming\\NuGet\\NuGet.Config",

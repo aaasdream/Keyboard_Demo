@@ -1,14 +1,27 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "Z:\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\",
+  "WorkspaceRootPath": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{960BC860-6016-4FEA-BAB0-498D0312DEEF}|TouchKeyBoard.csproj|z:\\\u6587\u4EF6\\keyboard\\test1\\touchkeyboard_demo\\touchkeyboard\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{960BC860-6016-4FEA-BAB0-498D0312DEEF}|TouchKeyBoard.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{960BC860-6016-4FEA-BAB0-498D0312DEEF}|TouchKeyBoard.csproj|\\\\vmware-host\\shared folders\\\u6587\u4EF6\\keyboard\\test1\\touchkeyboard_demo\\touchkeyboard\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{960BC860-6016-4FEA-BAB0-498D0312DEEF}|TouchKeyBoard.csproj|Z:\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{960BC860-6016-4FEA-BAB0-498D0312DEEF}|TouchKeyBoard.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{960BC860-6016-4FEA-BAB0-498D0312DEEF}|TouchKeyBoard.csproj|\\\\vmware-host\\shared folders\\\u6587\u4EF6\\keyboard\\test1\\touchkeyboard_demo\\touchkeyboard\\windowdetect.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{960BC860-6016-4FEA-BAB0-498D0312DEEF}|TouchKeyBoard.csproj|\\\\vmware-host\\shared folders\\\u6587\u4EF6\\keyboard\\test1\\touchkeyboard_demo\\touchkeyboard\\debugwindowlogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{960BC860-6016-4FEA-BAB0-498D0312DEEF}|TouchKeyBoard.csproj|\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{960BC860-6016-4FEA-BAB0-498D0312DEEF}|TouchKeyBoard.csproj|\\\\vmware-host\\shared folders\\\u6587\u4EF6\\keyboard\\test1\\touchkeyboard_demo\\touchkeyboard\\uiautomationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{960BC860-6016-4FEA-BAB0-498D0312DEEF}|TouchKeyBoard.csproj|\\\\vmware-host\\shared folders\\\u6587\u4EF6\\keyboard\\test1\\touchkeyboard_demo\\touchkeyboard\\windowcapture.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{960BC860-6016-4FEA-BAB0-498D0312DEEF}|TouchKeyBoard.csproj|\\\\vmware-host\\shared folders\\\u6587\u4EF6\\keyboard\\test1\\touchkeyboard_demo\\touchkeyboard\\apifile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,31 +31,96 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "UIAutomationController.cs",
+              "DocumentMoniker": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\UIAutomationController.cs",
+              "RelativeDocumentMoniker": "UIAutomationController.cs",
+              "ToolTip": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\UIAutomationController.cs",
+              "RelativeToolTip": "UIAutomationController.cs",
+              "ViewState": "AgIAAEAAAAAAAAAAAAAswFAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T13:25:29.479Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Form1.cs [Design]",
-              "DocumentMoniker": "Z:\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\Form1.cs",
+              "Title": "WindowDetect.cs",
+              "DocumentMoniker": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\WindowDetect.cs",
+              "RelativeDocumentMoniker": "WindowDetect.cs",
+              "ToolTip": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\WindowDetect.cs",
+              "RelativeToolTip": "WindowDetect.cs",
+              "ViewState": "AgIAAF0BAAAAAAAAAAAswG0BAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T13:21:58.585Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Form1.cs [\u8A2D\u8A08]",
+              "DocumentMoniker": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "Z:\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\Form1.cs [Design]",
-              "RelativeToolTip": "Form1.cs [Design]",
+              "ToolTip": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\Form1.cs [\u8A2D\u8A08]*",
+              "RelativeToolTip": "Form1.cs [\u8A2D\u8A08]*",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-20T13:25:28.714Z",
-              "EditorCaption": " [Design]"
+              "EditorCaption": " [\u8A2D\u8A08]"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Form1.cs",
-              "DocumentMoniker": "Z:\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\Form1.cs",
+              "DocumentMoniker": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "Z:\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\Form1.cs",
-              "RelativeToolTip": "Form1.cs",
-              "ViewState": "AgIAABoDAAAAAAAAAAA2wCcDAAABAAAAAAAAAA==",
+              "ToolTip": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\Form1.cs*",
+              "RelativeToolTip": "Form1.cs*",
+              "ViewState": "AgIAAFEBAAAAAAAAAAAcwFMBAABPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-24T04:24:33.525Z",
+              "WhenOpened": "2025-08-24T12:23:56.202Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "DebugWindowLogger.cs",
+              "DocumentMoniker": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\DebugWindowLogger.cs",
+              "RelativeDocumentMoniker": "DebugWindowLogger.cs",
+              "ToolTip": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\DebugWindowLogger.cs",
+              "RelativeToolTip": "DebugWindowLogger.cs",
+              "ViewState": "AgIAADkAAAAAAAAAAIAxwEMAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T12:58:35.65Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "APIFIle.cs",
+              "DocumentMoniker": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\APIFIle.cs",
+              "RelativeDocumentMoniker": "APIFIle.cs",
+              "ToolTip": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\APIFIle.cs",
+              "RelativeToolTip": "APIFIle.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABEAAABWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T12:37:03.911Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "WindowCapture.cs",
+              "DocumentMoniker": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\WindowCapture.cs",
+              "RelativeDocumentMoniker": "WindowCapture.cs",
+              "ToolTip": "\\\\vmware-host\\Shared Folders\\\u6587\u4EF6\\KeyBoard\\Test1\\TouchKeyboard_Demo\\TouchKeyBoard\\WindowCapture.cs",
+              "RelativeToolTip": "WindowCapture.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAswCEAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T12:57:34.34Z",
               "EditorCaption": ""
             }
           ]
