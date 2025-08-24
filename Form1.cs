@@ -53,6 +53,7 @@ namespace TouchKeyBoard
         private const uint EVENT_OBJECT_HIDE = 0x8003;
         private const uint WINEVENT_OUTOFCONTEXT = 0;
         private const string TEAMS_CALL_WINDOW_CLASS = "TeamsWebView";
+        private const string TEAMS_PROCESS_NAME = "ms-teams";
 
         #endregion
 
@@ -65,6 +66,9 @@ namespace TouchKeyBoard
             InCall
         }
         private AppState currentState = AppState.Normal;
+
+        private DateTime inCallStateChangeTime;
+        private const int IN_CALL_GRACE_PERIOD_SECONDS = 5;
 
         private bool debug = true;
         private Form debugWindow;
@@ -385,6 +389,7 @@ namespace TouchKeyBoard
 
         #region 焦點監控與狀態切換
 
+        // ▼▼▼ 核心修正：完全重構 CheckFocusedWindow 的邏輯 ▼▼▼
         private void CheckFocusedWindow(object sender, EventArgs e)
         {
             SetWindowPos(this.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
@@ -395,30 +400,56 @@ namespace TouchKeyBoard
                 return;
             }
 
-            string appName = GetProcessNameFromHwnd(currentWindow);
-
-            if (currentState == AppState.InCall)
+            // 狀態機不應該在有來電時被 timer 影響，WinEventProc 優先
+            if (currentState == AppState.IncomingCall)
             {
-                if (appName.ToLower().Contains("msteams"))
+                return;
+            }
+
+            // 優先級 1: 檢查當前視窗是否為通話視窗
+            if (IsTeamsCallWindow(currentWindow))
+            {
+                // 如果是通話視窗，我們的狀態必須是 InCall
+                if (currentState != AppState.InCall)
                 {
-                    teamsCallWindowHandle = currentWindow;
-                    lastActiveWindow = currentWindow;
+                    LogDebugMessage(" -> 偵測到焦點在通話視窗上，但目前狀態不是 InCall。強制切換！");
+                    ChangeState(AppState.InCall, currentWindow, null);
                 }
                 else
                 {
-                    LogDebugMessage(" -> 焦點已離開 Teams，假設通話結束。");
+                    // 如果狀態已經是 InCall，只需確保句柄是最新的
+                    teamsCallWindowHandle = currentWindow;
+                }
+                return; // 處理完畢，結束本次檢查
+            }
+
+            // 優先級 2: 如果不是通話視窗，再處理其他情況
+            if (currentState == AppState.InCall)
+            {
+                // 如果我們以為在通話中，但當前視窗已不是通話視窗，則準備切換回 Normal
+                bool isInGracePeriod = (DateTime.Now - inCallStateChangeTime).TotalSeconds < IN_CALL_GRACE_PERIOD_SECONDS;
+                if (isInGracePeriod)
+                {
+                    LogDebugMessage($" -> UIA 檢查失敗，但仍在 {IN_CALL_GRACE_PERIOD_SECONDS} 秒寬限期內。忽略並保持 InCall 狀態。");
+                    return; // 在寬限期內，忽略這次的失敗
+                }
+                else
+                {
+                    string appName = GetProcessNameFromHwnd(currentWindow);
+                    LogDebugMessage($" -> 焦點已離開通話視窗 (目前在 '{appName}') 且寬限期已過。恢復為 Normal 狀態。");
                     ChangeState(AppState.Normal, IntPtr.Zero, null);
                 }
             }
             else if (currentState == AppState.Normal)
             {
+                // 執行標準的應用程式快捷鍵邏輯
+                string appName = GetProcessNameFromHwnd(currentWindow);
                 if (!string.IsNullOrEmpty(appName))
                 {
                     if (appName != "TouchKeyBoard")
                     {
                         lastActiveWindow = currentWindow;
                     }
-
                     if (appName != currentFocusedAppName)
                     {
                         currentFocusedAppName = appName;
@@ -428,13 +459,76 @@ namespace TouchKeyBoard
             }
         }
 
+        private bool IsTeamsCallWindow(IntPtr hwnd)
+        {
+            string processName = GetProcessNameFromHwnd(hwnd);
+            if (!processName.Equals(TEAMS_PROCESS_NAME, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            StringBuilder titleBuilder = new StringBuilder(256);
+            GetWindowText(hwnd, titleBuilder, titleBuilder.Capacity);
+            if (debug) LogDebugMessage($" -> UIA 視窗檢查: 開始掃描句柄 {hwnd}, 標題: '{titleBuilder}'...");
+
+            string[] inCallButtonKeywords = {
+                "Mute", "Unmute", "靜音",
+                "Camera", "攝影機", "Turn camera on", "Turn camera off",
+                "Leave", "Hang up", "離開", "掛斷",
+                "Share", "共用"
+            };
+
+            try
+            {
+                AutomationElement rootElement = AutomationElement.FromHandle(hwnd);
+                if (rootElement == null) return false;
+
+                var buttonCondition = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button);
+                var allButtons = rootElement.FindAll(TreeScope.Descendants, buttonCondition);
+
+                if (debug) LogDebugMessage($"   - 掃描到 {allButtons.Count} 個按鈕元件。");
+
+                foreach (AutomationElement button in allButtons)
+                {
+                    try
+                    {
+                        string name = button.Current.Name;
+                        if (string.IsNullOrWhiteSpace(name)) continue;
+
+                        if (debug) LogDebugMessage($"   - 找到按鈕: '{name}'");
+
+                        if (inCallButtonKeywords.Any(keyword => name.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            if (debug) LogDebugMessage($"   -> ✓ 找到通話控制按鈕 '{name}'。判斷為通話視窗。");
+                            return true;
+                        }
+                    }
+                    catch (ElementNotAvailableException) { }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (debug) LogDebugMessage($"   - UIA 掃描期間出錯: {ex.Message}");
+                return false;
+            }
+
+            if (debug) LogDebugMessage($"   -> ✗ 未找到任何通話控制按鈕。判斷為非通話視窗。");
+            return false;
+        }
+
         private void ChangeState(AppState newState, IntPtr windowHandle, List<string> teamsActions)
         {
-            if (currentState == newState) return;
+            if (currentState == newState) return; // 避免不必要的重複狀態變更
 
             LogDebugMessage($"--- 狀態變更: {currentState} -> {newState} ---");
             currentState = newState;
             teamsCallWindowHandle = windowHandle;
+
+            if (newState == AppState.InCall)
+            {
+                inCallStateChangeTime = DateTime.Now;
+                LogDebugMessage($" -> 已進入 InCall 狀態，{IN_CALL_GRACE_PERIOD_SECONDS} 秒寬限期開始。");
+            }
 
             this.Invoke(new Action(() => {
                 UpdateButtonsForApp(teamsActions);
@@ -481,12 +575,16 @@ namespace TouchKeyBoard
                 btn.Text = ""; btn.Tag = null; btn.Enabled = false;
                 btn.BackColor = SystemColors.Control; btn.ForeColor = SystemColors.ControlText;
             }
-            if (!appShortcuts.ContainsKey(currentFocusedAppName))
+
+            var appKey = appShortcuts.Keys.FirstOrDefault(k => currentFocusedAppName.ToLower().Contains(k.ToLower()));
+
+            if (appKey == null)
             {
-                if (debug) LogDebugMessage("按鈕已清空（無對應設定）");
+                if (debug) LogDebugMessage($"按鈕已清空 (無對應設定 for '{currentFocusedAppName}')");
                 return;
             }
-            var shortcuts = appShortcuts[currentFocusedAppName];
+
+            var shortcuts = appShortcuts[appKey];
             for (int i = 0; i < shortcuts.Count && i < buttons.Length; i++)
             {
                 buttons[i].Text = $"{shortcuts[i].DisplayName}\n{shortcuts[i].KeyCombination}";
@@ -534,6 +632,7 @@ namespace TouchKeyBoard
 
         private void SetupInCallButtons()
         {
+            this.Text = "TouchKeyBoard - InCall";
             foreach (Button btn in buttons)
             {
                 btn.Text = ""; btn.Tag = null; btn.Enabled = false;
@@ -563,9 +662,23 @@ namespace TouchKeyBoard
 
             LogDebugMessage($">>> 執行快捷鍵: {shortcut.DisplayName} ({shortcut.SendKeysFormat})");
 
-            IntPtr targetWindow = (currentState == AppState.IncomingCall || currentState == AppState.InCall)
-                                  ? teamsCallWindowHandle
-                                  : lastActiveWindow;
+            // ▼▼▼ 核心修正：確保在 Button_Click 中使用的 handle 是正確的 ▼▼▼
+            IntPtr targetWindow;
+            if (currentState == AppState.IncomingCall)
+            {
+                targetWindow = teamsCallWindowHandle; // 來電時，目標是通知視窗
+            }
+            else if (currentState == AppState.InCall)
+            {
+                // 通話中，目標應該是前景的通話視窗，GetForegroundWindow() 最可靠
+                targetWindow = GetForegroundWindow();
+                LogDebugMessage($" -> InCall 點擊，使用前景視窗 {targetWindow} 作為目標");
+            }
+            else
+            {
+                targetWindow = lastActiveWindow; // 正常模式
+            }
+            // ▲▲▲ 核心修正 ▲▲▲
 
             if (targetWindow == IntPtr.Zero)
             {
@@ -584,39 +697,31 @@ namespace TouchKeyBoard
                     SendKeys.SendWait(shortcut.SendKeysFormat);
                     LogDebugMessage($"✓ 快捷鍵已發送");
 
-                    // ▼▼▼ 核心修正 ▼▼▼
                     if (currentState == AppState.IncomingCall)
                     {
                         if (shortcut.DisplayName.Contains("接聽"))
                         {
-                            // 儲存當前的來電視窗句柄，以便稍後關閉
-                            IntPtr windowToClose = teamsCallWindowHandle;
-
-                            // 立即切換到通話中狀態
+                            // 這裡的 targetWindow 就是我們要關閉的舊通知視窗
+                            IntPtr windowToClose = targetWindow;
                             ChangeState(AppState.InCall, IntPtr.Zero, null);
-                            LogDebugMessage("-> 偵測到接聽操作，已切換到 InCall 狀態。");
 
-                            // 創建一個一次性的計時器來延遲發送關閉訊息
                             System.Windows.Forms.Timer closeTimer = new System.Windows.Forms.Timer();
-                            closeTimer.Interval = 1500; // 延遲 1.5 秒
+                            closeTimer.Interval = 1500;
                             closeTimer.Tick += (timerSender, timerArgs) =>
                             {
-                                // 計時器觸發時執行
                                 SendMessage(windowToClose, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
                                 LogDebugMessage($"✓ [延遲任務] 已發送 WM_CLOSE 訊息到來電視窗 {windowToClose}。");
-                                closeTimer.Stop(); // 停止計時器
-                                closeTimer.Dispose(); // 釋放資源
+                                closeTimer.Stop();
+                                closeTimer.Dispose();
                             };
-                            closeTimer.Start(); // 啟動計時器
+                            closeTimer.Start();
                             LogDebugMessage($"-> 已啟動 1.5 秒延遲關閉計時器。");
                         }
                         else if (shortcut.DisplayName.Contains("拒絕"))
                         {
-                            // 拒絕操作通常會直接關閉視窗，所以我們可以立即切換回正常狀態
                             ChangeState(AppState.Normal, IntPtr.Zero, null);
                         }
                     }
-                    // ▲▲▲ 核心修正 ▲▲▲
                 }
             }
             catch (Exception ex)

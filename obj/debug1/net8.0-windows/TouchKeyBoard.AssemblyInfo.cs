@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TouchKeyBoard")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("debug1")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+76a9e818eb8579905f2ab5d11dfd80020d3ab697")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+caeaa2e626d84047d1ed7d7e2da79a9d8222c130")]
 [assembly: System.Reflection.AssemblyProductAttribute("TouchKeyBoard")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TouchKeyBoard")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
