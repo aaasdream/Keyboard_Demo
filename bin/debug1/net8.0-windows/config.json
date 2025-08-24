@@ -1,0 +1,122 @@
+{
+  "mspaint": [
+    { "DisplayName": "新增", "KeyCombination": "Ctrl+N", "SendKeysFormat": "^n", "Description": "" },
+    { "DisplayName": "開啟", "KeyCombination": "Ctrl+O", "SendKeysFormat": "^o", "Description": "" },
+    { "DisplayName": "儲存", "KeyCombination": "Ctrl+S", "SendKeysFormat": "^s", "Description": "" },
+    { "DisplayName": "另存新檔", "KeyCombination": "F12", "SendKeysFormat": "{F12}", "Description": "" },
+    { "DisplayName": "復原", "KeyCombination": "Ctrl+Z", "SendKeysFormat": "^z", "Description": "" },
+    { "DisplayName": "重做", "KeyCombination": "Ctrl+Y", "SendKeysFormat": "^y", "Description": "" },
+    { "DisplayName": "全選", "KeyCombination": "Ctrl+A", "SendKeysFormat": "^a", "Description": "" },
+    { "DisplayName": "複製", "KeyCombination": "Ctrl+C", "SendKeysFormat": "^c", "Description": "" },
+    { "DisplayName": "貼上", "KeyCombination": "Ctrl+V", "SendKeysFormat": "^v", "Description": "" },
+    { "DisplayName": "放大", "KeyCombination": "Ctrl+Plus", "SendKeysFormat": "^{ADD}", "Description": "" }
+  ],
+  "notepad": [
+    { "DisplayName": "新增", "KeyCombination": "Ctrl+N", "SendKeysFormat": "^n", "Description": "" },
+    { "DisplayName": "開啟", "KeyCombination": "Ctrl+O", "SendKeysFormat": "^o", "Description": "" },
+    { "DisplayName": "儲存", "KeyCombination": "Ctrl+S", "SendKeysFormat": "^s", "Description": "" },
+    { "DisplayName": "另存新檔", "KeyCombination": "Ctrl+Shift+S", "SendKeysFormat": "^+s", "Description": "" },
+    { "DisplayName": "尋找", "KeyCombination": "Ctrl+F", "SendKeysFormat": "^f", "Description": "" },
+    { "DisplayName": "取代", "KeyCombination": "Ctrl+H", "SendKeysFormat": "^h", "Description": "" },
+    { "DisplayName": "全選", "KeyCombination": "Ctrl+A", "SendKeysFormat": "^a", "Description": "" },
+    { "DisplayName": "復原", "KeyCombination": "Ctrl+Z", "SendKeysFormat": "^z", "Description": "" },
+    { "DisplayName": "複製", "KeyCombination": "Ctrl+C", "SendKeysFormat": "^c", "Description": "" },
+    { "DisplayName": "時間/日期", "KeyCombination": "F5", "SendKeysFormat": "{F5}", "Description": "" }
+  ],
+  "Code": [
+    { "DisplayName": "儲存", "KeyCombination": "Ctrl+S", "SendKeysFormat": "^s", "Description": "" },
+    { "DisplayName": "開啟檔案", "KeyCombination": "Ctrl+O", "SendKeysFormat": "^o", "Description": "" },
+    { "DisplayName": "命令選擇區", "KeyCombination": "F1", "SendKeysFormat": "{F1}", "Description": "Show Command Palette" },
+    { "DisplayName": "尋找", "KeyCombination": "Ctrl+F", "SendKeysFormat": "^f", "Description": "" },
+    { "DisplayName": "取代", "KeyCombination": "Ctrl+H", "SendKeysFormat": "^h", "Description": "" },
+    { "DisplayName": "向下複製", "KeyCombination": "Shift+Alt+Down", "SendKeysFormat": "+%{DOWN}", "Description": "" },
+    { "DisplayName": "刪除整行", "KeyCombination": "Ctrl+Shift+K", "SendKeysFormat": "^+k", "Description": "" },
+    { "DisplayName": "重做", "KeyCombination": "Ctrl+Y", "SendKeysFormat": "^y", "Description": "" },
+    { "DisplayName": "終端機", "KeyCombination": "Ctrl+`", "SendKeysFormat": "^`", "Description": "" },
+    { "DisplayName": "格式化", "KeyCombination": "Shift+Alt+F", "SendKeysFormat": "+%f", "Description": "" }
+  ],
+  "chrome": [
+    { "DisplayName": "新分頁", "KeyCombination": "Ctrl+T", "SendKeysFormat": "^t", "Description": "" },
+    { "DisplayName": "關閉分頁", "KeyCombination": "Ctrl+W", "SendKeysFormat": "^w", "Description": "" },
+    { "DisplayName": "重開關閉分頁", "KeyCombination": "Ctrl+Shift+T", "SendKeysFormat": "^+t", "Description": "" },
+    { "DisplayName": "上一頁", "KeyCombination": "Alt+Left", "SendKeysFormat": "%{LEFT}", "Description": "" },
+    { "DisplayName": "下一頁", "KeyCombination": "Alt+Right", "SendKeysFormat": "%{RIGHT}", "Description": "" },
+    { "DisplayName": "書籤", "KeyCombination": "Ctrl+D", "SendKeysFormat": "^d", "Description": "" },
+    { "DisplayName": "開發者工具", "KeyCombination": "F12", "SendKeysFormat": "{F12}", "Description": "" },
+    { "DisplayName": "無痕模式", "KeyCombination": "Ctrl+Shift+N", "SendKeysFormat": "^+n", "Description": "" },
+    { "DisplayName": "尋找", "KeyCombination": "Ctrl+F", "SendKeysFormat": "^f", "Description": "" },
+    { "DisplayName": "下載", "KeyCombination": "Ctrl+J", "SendKeysFormat": "^j", "Description": "" }
+  ],
+  "msedge": [
+    { "DisplayName": "新分頁", "KeyCombination": "Ctrl+T", "SendKeysFormat": "^t", "Description": "" },
+    { "DisplayName": "關閉分頁", "KeyCombination": "Ctrl+W", "SendKeysFormat": "^w", "Description": "" },
+    { "DisplayName": "重開關閉分頁", "KeyCombination": "Ctrl+Shift+T", "SendKeysFormat": "^+t", "Description": "" },
+    { "DisplayName": "上一頁", "KeyCombination": "Alt+Left", "SendKeysFormat": "%{LEFT}", "Description": "" },
+    { "DisplayName": "下一頁", "KeyCombination": "Alt+Right", "SendKeysFormat": "%{RIGHT}", "Description": "" },
+    { "DisplayName": "我的最愛", "KeyCombination": "Ctrl+D", "SendKeysFormat": "^d", "Description": "" },
+    { "DisplayName": "開發者工具", "KeyCombination": "F12", "SendKeysFormat": "{F12}", "Description": "" },
+    { "DisplayName": "InPrivate 視窗", "KeyCombination": "Ctrl+Shift+N", "SendKeysFormat": "^+n", "Description": "" },
+    { "DisplayName": "歷程記錄", "KeyCombination": "Ctrl+H", "SendKeysFormat": "^h", "Description": "" },
+    { "DisplayName": "下載", "KeyCombination": "Ctrl+J", "SendKeysFormat": "^j", "Description": "" }
+  ],
+  "WINWORD": [
+    { "DisplayName": "儲存", "KeyCombination": "Ctrl+S", "SendKeysFormat": "^s", "Description": "" },
+    { "DisplayName": "開啟", "KeyCombination": "Ctrl+O", "SendKeysFormat": "^o", "Description": "" },
+    { "DisplayName": "復原", "KeyCombination": "Ctrl+Z", "SendKeysFormat": "^z", "Description": "" },
+    { "DisplayName": "重做", "KeyCombination": "Ctrl+Y", "SendKeysFormat": "^y", "Description": "" },
+    { "DisplayName": "粗體", "KeyCombination": "Ctrl+B", "SendKeysFormat": "^b", "Description": "" },
+    { "DisplayName": "斜體", "KeyCombination": "Ctrl+I", "SendKeysFormat": "^i", "Description": "" },
+    { "DisplayName": "底線", "KeyCombination": "Ctrl+U", "SendKeysFormat": "^u", "Description": "" },
+    { "DisplayName": "複製", "KeyCombination": "Ctrl+C", "SendKeysFormat": "^c", "Description": "" },
+    { "DisplayName": "貼上", "KeyCombination": "Ctrl+V", "SendKeysFormat": "^v", "Description": "" },
+    { "DisplayName": "列印", "KeyCombination": "Ctrl+P", "SendKeysFormat": "^p", "Description": "" }
+  ],
+  "EXCEL": [
+    { "DisplayName": "儲存", "KeyCombination": "Ctrl+S", "SendKeysFormat": "^s", "Description": "" },
+    { "DisplayName": "開啟", "KeyCombination": "Ctrl+O", "SendKeysFormat": "^o", "Description": "" },
+    { "DisplayName": "復原", "KeyCombination": "Ctrl+Z", "SendKeysFormat": "^z", "Description": "" },
+    { "DisplayName": "粗體", "KeyCombination": "Ctrl+B", "SendKeysFormat": "^b", "Description": "" },
+    { "DisplayName": "篩選", "KeyCombination": "Ctrl+Shift+L", "SendKeysFormat": "^+l", "Description": "Toggle filters" },
+    { "DisplayName": "全選", "KeyCombination": "Ctrl+A", "SendKeysFormat": "^a", "Description": "" },
+    { "DisplayName": "複製", "KeyCombination": "Ctrl+C", "SendKeysFormat": "^c", "Description": "" },
+    { "DisplayName": "貼上", "KeyCombination": "Ctrl+V", "SendKeysFormat": "^v", "Description": "" },
+    { "DisplayName": "關閉活頁簿", "KeyCombination": "Ctrl+W", "SendKeysFormat": "^w", "Description": "" },
+    { "DisplayName": "新活頁簿", "KeyCombination": "Ctrl+N", "SendKeysFormat": "^n", "Description": "" }
+  ],
+  "ms-teams": [
+    { "DisplayName": "靜音切換", "KeyCombination": "Ctrl+Shift+M", "SendKeysFormat": "^+m", "Description": "" },
+    { "DisplayName": "視訊切換", "KeyCombination": "Ctrl+Shift+O", "SendKeysFormat": "^+o", "Description": "" },
+    { "DisplayName": "舉手/放下", "KeyCombination": "Ctrl+Shift+K", "SendKeysFormat": "^+k", "Description": "" },
+    { "DisplayName": "背景模糊", "KeyCombination": "Ctrl+Shift+P", "SendKeysFormat": "^+p", "Description": "" },
+    { "DisplayName": "開始新聊天", "KeyCombination": "Ctrl+N", "SendKeysFormat": "^n", "Description": "" },
+    { "DisplayName": "搜尋", "KeyCombination": "Ctrl+F", "SendKeysFormat": "^f", "Description": "Search in chat/channel" },
+    { "DisplayName": "設定", "KeyCombination": "Ctrl+,", "SendKeysFormat": "^,", "Description": "" },
+    { "DisplayName": "接受視訊通話", "KeyCombination": "Ctrl+Shift+A", "SendKeysFormat": "^+a", "Description": "" },
+    { "DisplayName": "拒絕通話", "KeyCombination": "Ctrl+Shift+D", "SendKeysFormat": "^+d", "Description": "" },
+    { "DisplayName": "附加檔案", "KeyCombination": "Ctrl+O", "SendKeysFormat": "^o", "Description": "" }
+  ],
+  "LINE": [
+    { "DisplayName": "鎖定 LINE", "KeyCombination": "Ctrl+L", "SendKeysFormat": "^l", "Description": "" },
+    { "DisplayName": "關閉視窗", "KeyCombination": "Ctrl+W", "SendKeysFormat": "^w", "Description": "" },
+    { "DisplayName": "截圖", "KeyCombination": "Ctrl+P", "SendKeysFormat": "^p", "Description": "" },
+    { "DisplayName": "好友列表", "KeyCombination": "Ctrl+1", "SendKeysFormat": "^1", "Description": "" },
+    { "DisplayName": "聊天列表", "KeyCombination": "Ctrl+2", "SendKeysFormat": "^2", "Description": "" },
+    { "DisplayName": "Keep", "KeyCombination": "Ctrl+K", "SendKeysFormat": "^k", "Description": "" },
+    { "DisplayName": "換行", "KeyCombination": "Shift+Enter", "SendKeysFormat": "+{ENTER}", "Description": "" },
+    { "DisplayName": "", "KeyCombination": "", "SendKeysFormat": "", "Description": "" },
+    { "DisplayName": "", "KeyCombination": "", "SendKeysFormat": "", "Description": "" },
+    { "DisplayName": "", "KeyCombination": "", "SendKeysFormat": "", "Description": "" }
+  ],
+  "explorer": [
+    { "DisplayName": "新視窗", "KeyCombination": "Ctrl+N", "SendKeysFormat": "^n", "Description": "" },
+    { "DisplayName": "新資料夾", "KeyCombination": "Ctrl+Shift+N", "SendKeysFormat": "^+n", "Description": "" },
+    { "DisplayName": "重新命名", "KeyCombination": "F2", "SendKeysFormat": "{F2}", "Description": "" },
+    { "DisplayName": "上一頁", "KeyCombination": "Alt+Left", "SendKeysFormat": "%{LEFT}", "Description": "" },
+    { "DisplayName": "上一層", "KeyCombination": "Alt+Up", "SendKeysFormat": "%{UP}", "Description": "" },
+    { "DisplayName": "刪除", "KeyCombination": "Delete", "SendKeysFormat": "{DEL}", "Description": "" },
+    { "DisplayName": "屬性", "KeyCombination": "Alt+Enter", "SendKeysFormat": "%{ENTER}", "Description": "" },
+    { "DisplayName": "搜尋", "KeyCombination": "Ctrl+F", "SendKeysFormat": "^f", "Description": "" },
+    { "DisplayName": "切換到網址列", "KeyCombination": "Alt+D", "SendKeysFormat": "%d", "Description": "" },
+    { "DisplayName": "關閉視窗", "KeyCombination": "Ctrl+W", "SendKeysFormat": "^w", "Description": "" }
+  ]
+}

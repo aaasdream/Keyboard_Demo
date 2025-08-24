@@ -1,0 +1,16 @@
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\bin\debug1\net8.0-windows\TouchKeyBoard.exe
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\bin\debug1\net8.0-windows\TouchKeyBoard.deps.json
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\bin\debug1\net8.0-windows\TouchKeyBoard.runtimeconfig.json
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\bin\debug1\net8.0-windows\TouchKeyBoard.dll
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\bin\debug1\net8.0-windows\TouchKeyBoard.pdb
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.Form1.resources
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.csproj.GenerateResource.cache
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.GeneratedMSBuildEditorConfig.editorconfig
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.AssemblyInfoInputs.cache
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.AssemblyInfo.cs
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.csproj.CoreCompileInputs.cache
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.dll
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\refint\TouchKeyBoard.dll
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.pdb
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\TouchKeyBoard.genruntimeconfig.cache
+Z:\文件\KeyBoard\Test1\TouchKeyboard_Demo\TouchKeyBoard\obj\debug1\net8.0-windows\ref\TouchKeyBoard.dll

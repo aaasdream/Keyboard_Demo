@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36408.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TouchKeyBoard", "TouchKeyBoard.csproj", "{960BC860-6016-4FEA-BAB0-498D0312DEEF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		debug1|Any CPU = debug1|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{960BC860-6016-4FEA-BAB0-498D0312DEEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{960BC860-6016-4FEA-BAB0-498D0312DEEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{960BC860-6016-4FEA-BAB0-498D0312DEEF}.debug1|Any CPU.ActiveCfg = debug1|Any CPU
+		{960BC860-6016-4FEA-BAB0-498D0312DEEF}.debug1|Any CPU.Build.0 = debug1|Any CPU
+		{960BC860-6016-4FEA-BAB0-498D0312DEEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{960BC860-6016-4FEA-BAB0-498D0312DEEF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2568D1C7-2EE5-42EB-AE3D-2A806592D075}
+	EndGlobalSection
+EndGlobal
