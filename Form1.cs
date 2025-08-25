@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks; // 引入 Task 命名空間
 using System.Windows.Forms;
 
 namespace TouchKeyBoard
@@ -16,7 +17,7 @@ namespace TouchKeyBoard
         private enum AppState { Normal, IncomingCall }
         private AppState _currentState = AppState.Normal;
 
-        private readonly bool _debug = true;
+        private readonly bool _debug = false;
         private DebugWindowLogger _logger;
         private Button[] _buttons = new Button[10];
         private string _currentFocusedAppName = "";
@@ -116,9 +117,13 @@ namespace TouchKeyBoard
 
             if (FocusManager.IsTeamsInCallWindow(currentWindow))
             {
-                if (_currentFocusedAppName != "TeamsInCall")
+                // ★★★ 改善點 #1：當定時器偵測到通話視窗時，也更新 _lastActiveWindow ★★★
+                // 這樣即使用戶手動切換到其他視窗再切回來，也能保持正確的目標
+                if (_currentFocusedAppName != "TeamsInCall" || _lastActiveWindow != currentWindow)
                 {
+                    LogDebugMessage($"[Focus Check] 偵測到 Teams 通話視窗 (Handle: {currentWindow})，更新狀態。");
                     _currentFocusedAppName = "TeamsInCall";
+                    _lastActiveWindow = currentWindow; // 確保目標視窗為當前的通話視窗
                     SetupInCallButtons();
                 }
             }
@@ -177,6 +182,7 @@ namespace TouchKeyBoard
                     break;
                 case AppState.Normal:
                 default:
+                    // 恢復Normal狀態後，立即重新檢查一次當前視窗，確保UI正確
                     _currentFocusedAppName = "";
                     CheckFocusedWindow(null, null);
                     break;
@@ -252,7 +258,7 @@ namespace TouchKeyBoard
             _buttons[0].Text = "靜音切換";
             _buttons[0].Tag = new ShortcutKey { DisplayName = "靜音切換", KeyCombination = "Ctrl+Shift+M", SendKeysFormat = "^+m" };
             _buttons[0].Enabled = true;
-            _buttons[0].BackColor = Color.DarkGray;
+            _buttons[0].BackColor = Color.FromArgb(0, 120, 212);
             _buttons[0].ForeColor = Color.White;
 
             _buttons[1].Text = "視訊切換";
@@ -275,7 +281,7 @@ namespace TouchKeyBoard
             LogDebugMessage($">>> 執行快捷鍵: {shortcut.DisplayName} ({shortcut.SendKeysFormat})");
 
             IntPtr targetWindow = (_currentState == AppState.IncomingCall) ? _teamsCallWindowHandle : _lastActiveWindow;
-            LogDebugMessage($" -> 模式: {_currentState}, 目標視窗: {targetWindow}");
+            LogDebugMessage($" -> 模式: {_currentState}, 目標視窗: {targetWindow} ({WindowInspector.GetWindowDebugInfo(targetWindow)})");
 
             if (targetWindow == IntPtr.Zero)
             {
@@ -285,19 +291,18 @@ namespace TouchKeyBoard
 
             try
             {
+                // 先將目標視窗設為前景
                 bool switchResult = NativeMethods.SetForegroundWindow(targetWindow);
                 LogDebugMessage($"切換窗口結果: {(switchResult ? "成功" : "失敗")}");
 
-                if (switchResult)
-                {
-                    System.Threading.Thread.Sleep(100);
-                    SendKeys.SendWait(shortcut.SendKeysFormat);
-                    LogDebugMessage($"✓ 快捷鍵已發送");
+                // 即使切換失敗，仍嘗試發送，因為有時視窗已在前景但API返回false
+                System.Threading.Thread.Sleep(100); // 等待一下確保焦點穩定
+                SendKeys.SendWait(shortcut.SendKeysFormat);
+                LogDebugMessage($"✓ 快捷鍵已發送");
 
-                    if (_currentState == AppState.IncomingCall)
-                    {
-                        HandleIncomingCallAction(shortcut, targetWindow);
-                    }
+                if (_currentState == AppState.IncomingCall)
+                {
+                    HandleIncomingCallAction(shortcut, targetWindow);
                 }
             }
             catch (Exception ex)
@@ -306,10 +311,8 @@ namespace TouchKeyBoard
             }
         }
 
-        // 在 Form1.cs 中加入這個新方法
-
-       
-
+        // ★★★ 核心修改點 ★★★
+        // 修改此方法，使其在找到新視窗後，透過 Invoke 更新主 UI 執行緒的狀態
         private async void FocusTeamsInCallWindowAsync(IntPtr oldNotificationHwnd)
         {
             LogDebugMessage("-> 啟動非同步任務：搜尋新的 Teams 通話視窗...");
@@ -319,28 +322,28 @@ namespace TouchKeyBoard
                 // 在最多 5 秒內，每 250 毫秒嘗試一次
                 for (int i = 0; i < 20; i++)
                 {
-                    // 尋找所有名為 "ms-teams" 的行程
                     Process[] teamsProcesses = Process.GetProcessesByName("ms-teams");
                     foreach (Process p in teamsProcesses)
                     {
                         IntPtr candidateHwnd = p.MainWindowHandle;
 
-                        // 篩選條件：
-                        // 1. Handle 有效
-                        // 2. 不是舊的通知視窗
-                        // 3. 透過 UIA 檢查確認是「通話中」視窗
                         if (candidateHwnd != IntPtr.Zero &&
                             candidateHwnd != oldNotificationHwnd &&
                             FocusManager.IsTeamsInCallWindow(candidateHwnd))
                         {
                             LogDebugMessage($"  ✓ 找到新的通話視窗 Handle: {candidateHwnd}");
 
-                            // ★★★ 核心：在 UI 執行緒上設定前景視窗 ★★★
+                            // ★★★ 核心：在 UI 執行緒上更新狀態並設定前景視窗 ★★★
                             this.Invoke(new Action(() => {
+                                LogDebugMessage("  -> 正在 UI 執行緒上更新主表單狀態...");
                                 NativeMethods.SetForegroundWindow(candidateHwnd);
+                                _lastActiveWindow = candidateHwnd; // <-- 關鍵修復：更新最後活動視窗
+                                _currentFocusedAppName = "TeamsInCall"; // <-- 關鍵修復：更新當前應用程式名稱
+                                SetupInCallButtons(); // <-- 關鍵修復：立即刷新按鈕為「通話中」模式
+                                LogDebugMessage($"  -> 主狀態已成功更新: _lastActiveWindow = {candidateHwnd}, AppName = TeamsInCall");
                             }));
 
-                            LogDebugMessage("  ✓✓✓ 成功將焦點切換至新的通話視窗。搜尋任務結束。");
+                            LogDebugMessage("  ✓✓✓ 成功觸發焦點切換與狀態更新。搜尋任務結束。");
                             return; // 找到後立刻結束任務
                         }
                     }
@@ -350,34 +353,32 @@ namespace TouchKeyBoard
             });
         }
 
-        // 在 Form1.cs 中，用這個版本完全取代舊的 HandleIncomingCallAction 方法
         private void HandleIncomingCallAction(ShortcutKey shortcut, IntPtr windowToClose)
         {
             string debugInfo = WindowInspector.GetWindowDebugInfo(windowToClose);
             LogDebugMessage($"準備對以下視窗執行 '{shortcut.DisplayName}' 操作：");
             LogDebugMessage(debugInfo);
 
+            bool wasActionTaken = false;
             if (shortcut.DisplayName.Contains("接聽"))
             {
                 var acceptNames = new List<string> { "Accept with video", "接聽視訊", "Accept with audio", "接聽語音", "Accept", "接聽" };
+                wasActionTaken = UIAutomationController.InvokeButtonByName(windowToClose, acceptNames, LogDebugMessage);
 
-                // 透過 UIA 點擊按鈕
-                bool success = UIAutomationController.InvokeButtonByName(windowToClose, acceptNames, LogDebugMessage);
-
-                // ★★★ 只有在成功點擊後，才啟動焦點搜尋任務 ★★★
-                if (success)
+                // 只有在成功點擊後，才啟動焦點搜尋任務
+                if (wasActionTaken)
                 {
                     FocusTeamsInCallWindowAsync(windowToClose);
                 }
-
-                ChangeState(AppState.Normal, IntPtr.Zero, null);
             }
             else if (shortcut.DisplayName.Contains("拒絕"))
             {
                 var declineNames = new List<string> { "Decline", "拒絕" };
-                UIAutomationController.InvokeButtonByName(windowToClose, declineNames, LogDebugMessage);
-                ChangeState(AppState.Normal, IntPtr.Zero, null);
+                wasActionTaken = UIAutomationController.InvokeButtonByName(windowToClose, declineNames, LogDebugMessage);
             }
+
+            // 無論成功與否，都應離開來電狀態
+            ChangeState(AppState.Normal, IntPtr.Zero, null);
         }
 
         private void CreateButtons()
@@ -400,9 +401,7 @@ namespace TouchKeyBoard
                 _buttons[i].Click += Button_Click;
                 Controls.Add(_buttons[i]);
             }
-            // ... (Config button and resize handler)
         }
-        // ... 其他 UI 相關事件，如 ConfigButton_Click, Form1_Resize ...
         #endregion
     }
 }
