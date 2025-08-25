@@ -116,6 +116,18 @@ namespace TouchKeyBoard
                 { "DisplayName": "無痕模式", "KeyCombination": "Ctrl+Shift+N", "SendKeysFormat": "^+n", "Description": "" },
                 { "DisplayName": "尋找", "KeyCombination": "Ctrl+F", "SendKeysFormat": "^f", "Description": "" },
                 { "DisplayName": "下載", "KeyCombination": "Ctrl+J", "SendKeysFormat": "^j", "Description": "" }
+              ],
+              "ms-teams": [
+              { "DisplayName": "搜尋", "KeyCombination": "Ctrl+E", "SendKeysFormat": "^e", "Description": "跳至搜尋框" },
+              { "DisplayName": "新增聊天", "KeyCombination": "Ctrl+N", "SendKeysFormat": "^n", "Description": "開始新的聊天" },
+              { "DisplayName": "開啟設定", "KeyCombination": "Ctrl+,", "SendKeysFormat": "^,", "Description": "開啟設定" },
+              { "DisplayName": "開啟說明", "KeyCombination": "F1", "SendKeysFormat": "{F1}", "Description": "開啟說明" },
+              { "DisplayName": "放大", "KeyCombination": "Ctrl+=", "SendKeysFormat": "^=", "Description": "放大畫面" },
+              { "DisplayName": "縮小", "KeyCombination": "Ctrl+-", "SendKeysFormat": "^-", "Description": "縮小畫面" },
+              { "DisplayName": "附加檔案", "KeyCombination": "Ctrl+O", "SendKeysFormat": "^o", "Description": "附加檔案" },
+              { "DisplayName": "切換至聊天", "KeyCombination": "Ctrl+2", "SendKeysFormat": "^2", "Description": "" },
+              { "DisplayName": "切換至行事曆", "KeyCombination": "Ctrl+4", "SendKeysFormat": "^4", "Description": "" },
+              { "DisplayName": "切換至通話", "KeyCombination": "Ctrl+5", "SendKeysFormat": "^5", "Description": "" }
               ]
             }
             """;

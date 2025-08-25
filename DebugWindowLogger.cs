@@ -24,14 +24,6 @@ namespace TouchKeyBoard
                 BackColor = Color.Black
             };
 
-            // 新增 PictureBox 用於顯示擷取的視窗畫面
-            _pictureBox = new PictureBox
-            {
-                Dock = DockStyle.Bottom,
-                Height = 200,
-                BackColor = Color.FromArgb(20, 20, 20),
-                SizeMode = PictureBoxSizeMode.Zoom // 縮放以適應
-            };
 
             _debugTextBox = new TextBox
             {
@@ -67,28 +59,7 @@ namespace TouchKeyBoard
             }
         }
 
-        // 新增一個可以同時記錄文字和圖片的方法
-        public void LogWithImage(string message, Image windowImage)
-        {
-            Log(message); // 先記錄文字
-            if (_isDisposed || _pictureBox == null) return;
-
-            Action updateImage = () =>
-            {
-                // 先釋放舊圖片的資源
-                _pictureBox.Image?.Dispose();
-                _pictureBox.Image = windowImage;
-            };
-
-            if (_pictureBox.InvokeRequired)
-            {
-                _pictureBox.Invoke(updateImage);
-            }
-            else
-            {
-                updateImage();
-            }
-        }
+       
 
         private void AppendText(string text)
         {

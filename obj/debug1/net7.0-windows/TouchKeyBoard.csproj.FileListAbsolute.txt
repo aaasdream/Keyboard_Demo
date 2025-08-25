@@ -1,0 +1,17 @@
+C:\Aking_Code\Keyboard_Demo\bin\debug1\net7.0-windows\TouchKeyBoard.exe
+C:\Aking_Code\Keyboard_Demo\bin\debug1\net7.0-windows\TouchKeyBoard.deps.json
+C:\Aking_Code\Keyboard_Demo\bin\debug1\net7.0-windows\TouchKeyBoard.runtimeconfig.json
+C:\Aking_Code\Keyboard_Demo\bin\debug1\net7.0-windows\TouchKeyBoard.dll
+C:\Aking_Code\Keyboard_Demo\bin\debug1\net7.0-windows\TouchKeyBoard.pdb
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\TouchKeyBoard.csproj.AssemblyReference.cache
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\TouchKeyBoard.Form1.resources
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\TouchKeyBoard.csproj.GenerateResource.cache
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\TouchKeyBoard.GeneratedMSBuildEditorConfig.editorconfig
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\TouchKeyBoard.AssemblyInfoInputs.cache
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\TouchKeyBoard.AssemblyInfo.cs
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\TouchKeyBoard.csproj.CoreCompileInputs.cache
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\TouchKeyBoard.dll
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\refint\TouchKeyBoard.dll
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\TouchKeyBoard.pdb
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\TouchKeyBoard.genruntimeconfig.cache
+C:\Aking_Code\Keyboard_Demo\obj\debug1\net7.0-windows\ref\TouchKeyBoard.dll
